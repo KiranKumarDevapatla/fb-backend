@@ -1,30 +1,31 @@
 require("./db/db.connection");
-const dotenv = require("dotenv");
-
+require('dotenv').config();
 const Client = require("./models/client.model");
 const bcrypt = require("bcrypt");
 
 const express = require("express");
 const app = express();
 app.use(express.json());
-dotenv.config();
-const cors = require('cors');
+
+const cors = require("cors");
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://localhost:3000', 'https://fb-helpdesk-pro.vercel.app'],
+  origin: [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "https://fb-helpdesk-pro.vercel.app",
+  ],
   credentials: true,
-  optionSuccessStatus: 200
-}
+  optionSuccessStatus: 200,
+};
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   res.send("Hello, Express!");
 });
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 
 
 // Signup
@@ -183,37 +184,41 @@ async function sendMessage(page_id, page_access_token, PSID, messageText) {
   // Construct the message body
   const data = {
     recipient: {
-      id: PSID
+      id: PSID,
     },
     messaging_type: "RESPONSE",
     message: {
-      text: messageText
-    }
+      text: messageText,
+    },
   };
 
   const config = {
     headers: {
-      'Content-Type': 'application/json'
-    }
+      "Content-Type": "application/json",
+    },
   };
 
   // Send the HTTP request to the Messenger Platform
-  const res = await axios.post(`https://graph.facebook.com/v19.0/${page_id}/messages?access_token=${page_access_token}`, data, config);
+  const res = await axios.post(
+    `https://graph.facebook.com/v19.0/${page_id}/messages?access_token=${page_access_token}`,
+    data,
+    config
+  );
   if (res && !res.error) {
-    console.log('Message sent!');
+    console.log("Message sent!");
   } else {
     console.error("Unable to send message:" + err);
   }
 }
 
 // Webhook verify
-app.get('/webhook', (req, res) => {
-  let mode = req.query['hub.mode'];
-  let token = req.query['hub.verify_token'];
-  let challenge = req.query['hub.challenge'];
+app.get("/webhook", (req, res) => {
+  let mode = req.query["hub.mode"];
+  let token = req.query["hub.verify_token"];
+  let challenge = req.query["hub.challenge"];
   if (mode && token) {
-    if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
-      console.log('WEBHOOK_VERIFIED');
+    if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
+      console.log("WEBHOOK_VERIFIED");
       res.status(200).send(challenge);
     } else {
       res.sendStatus(403);
@@ -222,35 +227,30 @@ app.get('/webhook', (req, res) => {
 });
 
 // Webhook
-app.post('/webhook', (req, res) => {
-
+app.post("/webhook", (req, res) => {
   let body = req.body;
 
   // Checks this is an event from a page subscription
-  if (body.object === 'page') {
-
+  if (body.object === "page") {
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function (entry) {
-
-      // Gets the message. entry.messaging is an array, but 
+      // Gets the message. entry.messaging is an array, but
       // will only ever contain one message, so we get index 0
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
 
-      let page_id = body.entry[0].id
+      let page_id = body.entry[0].id;
       let page_access_token = body.entry[0].page_access_token;
       let PSID = body.entry[0].messaging[0].id;
       let messageText = body.entry[0].messaging[0].message;
 
       sendMessage(page_id, page_access_token, PSID, messageText);
-
     });
 
     // Returns a '200 OK' response to all requests
-    res.status(200).send('EVENT_RECEIVED');
+    res.status(200).send("EVENT_RECEIVED");
   } else {
     // Returns a '404 Not Found' if event is not from a page subscription
     res.sendStatus(404);
   }
-
 });
