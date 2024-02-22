@@ -11,7 +11,7 @@ const corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://localhost:3000",
-    "https://fb-frontend.vercel.app",
+    // "https://fb-helpdesk-pro.vercel.app",
   ],
   credentials: true,
   optionSuccessStatus: 200,
@@ -19,7 +19,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
-  res.send("Hello, Express!");
+  res.send("Hello, APP IS WORKING!");
 });
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
@@ -177,9 +177,12 @@ async function getUser(email) {
   }
 }
 
+
 // Send Message
 async function sendMessage(page_id, page_access_token, PSID, messageText) {
   // Construct the message body
+  const page_id=process.env.PAGE_ID;
+  const page_access_token=process.env.PAGE_ACCESS_TOKEN;
   const data = {
     recipient: {
       id: PSID,
