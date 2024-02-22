@@ -11,7 +11,7 @@ const corsOptions = {
   origin: [
     "http://localhost:3000",
     "https://localhost:3000",
-    // "https://fb-helpdesk-pro.vercel.app",
+    "https://fb-frontend.vercel.app",
   ],
   credentials: true,
   optionSuccessStatus: 200,
