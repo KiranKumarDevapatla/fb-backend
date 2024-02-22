@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 // Access your MongoDB connection string from secrets
-const mongoURI = process.env.MONGODB;
+const mongoURI = "mongodb+srv://devapatlakirankumar:Kiran2601@cluster0.gl55jzn.mongodb.net/FBHELPDESK";
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
