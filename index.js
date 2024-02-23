@@ -177,11 +177,9 @@ async function getUser(email) {
   }
 }
 
-const page_access_token=process.env.PAGE_ACCESS_TOKEN;
 
 // Send Message
-// async function sendMessage(page_id, page_access_token, PSID, messageText) 
-async function sendMessage( PSID, messageText){
+async function sendMessage(page_id, page_access_token, PSID, messageText) {
   // Construct the message body
   const data = {
     recipient: {
@@ -201,7 +199,7 @@ async function sendMessage( PSID, messageText){
 
   // Send the HTTP request to the Messenger Platform
   const res = await axios.post(
-    `https://graph.facebook.com/v19.0/225176530686691/messages?access_token=EAANKlbV8XikBO21vOfw4rCVLAE3qrUg35MwClf1nIkeo2U1UZAmnTX5x4jy2qjPZC7eNFEL7qT3EsIV1cR7Lu3o3TDkIqZCruErmVbvgMC3Ea6VZA9U6VQYDOcHZAPFNUZApyO6zgG4S5g1hJ649Gxe7Jm6N3c8dr5yPizyN7Nf5mhbpsJD0e6djVyP3ZCXQeFE`,
+    `https://graph.facebook.com/v19.0/${page_id}/messages?access_token=${page_access_token}`,
     data,
     config
   );
@@ -240,10 +238,8 @@ app.post("/webhook", (req, res) => {
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
 
-      // let page_id = body.entry[0].id;
-      // let page_access_token = body.entry[0].page_access_token;.
-      let page_id = '225176530686691';
-      let page_access_token = 'EAANKlbV8XikBO21vOfw4rCVLAE3qrUg35MwClf1nIkeo2U1UZAmnTX5x4jy2qjPZC7eNFEL7qT3EsIV1cR7Lu3o3TDkIqZCruErmVbvgMC3Ea6VZA9U6VQYDOcHZAPFNUZApyO6zgG4S5g1hJ649Gxe7Jm6N3c8dr5yPizyN7Nf5mhbpsJD0e6djVyP3ZCXQeFE';
+      let page_id = body.entry[0].id;
+      let page_access_token = body.entry[0].page_access_token;
       let PSID = body.entry[0].messaging[0].id;
       let messageText = body.entry[0].messaging[0].message;
 
